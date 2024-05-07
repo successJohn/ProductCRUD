@@ -1,0 +1,29 @@
+﻿version: '3.8'
+name: product-crud
+services:
+  api:
+    image: products-crud:latest   # Use the image defined in the csproj file
+    container_name: products-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"    # Expose port 5000 for the ASP.NET Core application
+    volumes:
+      - .:/app    # Mount the current directory as a volume inside the container
+    depends_on:
+      - db    # Make sure the database service starts before the web service
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest   # Use the latest MSSQL Server image
+    container_name: mssql_server
+    environment:
+      SA_PASSWORD: "SuccessJohn123#"   # Set the SA password for MSSQL Server
+      ACCEPT_EULA: "Y"   # Accept the EULA agreement
+    ports:
+      - "1433:1433"    # Expose port 1433 for MSSQL connections
+    volumes:
+      - mssql_data:/var/opt/mssql   # Mount a volume for persisting database data
+
+volumes:
+  mssql_data:   # Define a named volume for storing MSSQL data
